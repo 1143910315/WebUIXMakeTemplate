@@ -17,16 +17,16 @@ target("WebUIXMakeTemplate")
         "date"
     )
     add_cxflags(
-        "cl::/utf-8",
-        "cl::/W4",
-        "gcc::-Wall",
-        "cl::/INCREMENTAL"
+        "cl::/utf-8"
     )
+    set_warnings("allextra")
     if is_mode("debug") then
         add_defines("_DEBUG")
         set_symbols("debug", "edit")
     else
-        add_ldflags("-subsystem:windows")
+        if is_plat("windows") then
+            add_ldflags("-subsystem:windows")
+        end
     end
     set_kind("binary")
     add_deps("ui")
