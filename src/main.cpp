@@ -63,7 +63,9 @@ std::function<void()> timeSend = []() {
         }
     };
 int main() {
+#ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8);
+#endif
     webui::set_default_root_folder("dist");
 
     myWindow.bind("", [](webui::window::event *e) {
