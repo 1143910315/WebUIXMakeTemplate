@@ -25,7 +25,7 @@ target("WebUIXMakeTemplate")
         set_symbols("debug", "edit")
     else
         if is_plat("windows") then
-            add_ldflags("-subsystem:windows")
+            add_ldflags("-subsystem:windows", {force = true})
         end
     end
     set_kind("binary")

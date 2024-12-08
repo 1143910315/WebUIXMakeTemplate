@@ -5,7 +5,6 @@ target("ui")
     add_extrafiles("*.html")
     add_extrafiles("src/**")
     add_extrafiles("public/**")
-    -- 设置自定义运行脚本，自动运行安装好的app程序，并且自动获取设备输出信息
     on_build(function (target)
         local option = import("core.base.option")
         local oldir = os.cd(os.scriptdir())
