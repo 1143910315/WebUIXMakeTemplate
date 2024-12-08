@@ -37,14 +37,13 @@ jobs:
         with:
           version: 9
           run_install: false
-        working-directory: ./ui
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-        working-directory: ./ui
+          cache-dependency-path: ui/pnpm.lock.yaml
 
       - name: Install dependencies
         run: pnpm install
@@ -110,14 +109,13 @@ jobs:
         with:
           version: 9
           run_install: false
-        working-directory: ./ui
 
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-        working-directory: ./ui
+          cache-dependency-path: ui/pnpm.lock.yaml
 
       - name: Install dependencies
         run: pnpm install
