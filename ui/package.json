@@ -11,7 +11,7 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write --end-of-line crlf src/"
   },
   "dependencies": {
     "dayjs": "^1.11.13",
