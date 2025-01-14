@@ -14,6 +14,7 @@
     "format": "prettier --write --end-of-line crlf src/"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@vueuse/core": "^12.4.0",
     "dayjs": "^1.11.13",
     "element-plus": "^2.9.3",
