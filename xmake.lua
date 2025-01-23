@@ -34,3 +34,19 @@ target("WebUIXMakeTemplate")
     add_headerfiles("src/**.h")
     add_files("src/**.cpp")
     set_languages("clatest", "cxxlatest")
+
+    on_run(function (target)
+        -- 导入配置模块
+        import("core.project.config")
+        -- 获取配置值
+        if config.mode() == "debug" then
+            -- 导入task模块
+            import("core.base.task")
+            -- 运行这个webuidev task
+            task.run("webuidev",{},path.absolute(target:targetfile()))
+        else
+            local oldir = os.cd(target:targetdir())
+            os.execv(target:targetfile())
+            os.cd(oldir)
+        end
+    end)

@@ -1,3 +1,19 @@
+task("webuidev")
+    on_run(function (browserPath)
+        local oldir = os.cd(os.scriptdir())
+        if os.host() == "windows" then
+            os.setenv("VITE_BASE_URL", "http://localhost:9000")
+            os.execv("cmd",{"/C", "start", "pnpm.cmd","dev","--port","5173","--strictPort"})
+
+            os.cd(path.directory(browserPath))
+            os.execv(browserPath,{"http://localhost:5173/"})
+
+        else
+            -- os.execv("pnpm",{"dev","--open",browserPath})
+        end
+        os.cd(oldir)
+    end)
+
 target("ui")
     add_extrafiles("*.json")
     add_extrafiles("*.ts")
