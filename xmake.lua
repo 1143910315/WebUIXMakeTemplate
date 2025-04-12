@@ -6,7 +6,7 @@ if is_mode("debug") then
     add_requires("date", {debug = true})
 else
     set_runtimes("MD")
-    add_requires("webui")
+    add_requires("webui", {configs = {log = false}})
     add_requires("date")
 end
 includes("ui/xmake.lua")
