@@ -25,6 +25,21 @@ target("ui")
         local option = import("core.base.option")
         local oldir = os.cd(os.scriptdir())
         os.setenv("UI_BUILD_DIR", target:targetdir().."/dist")
+        if not os.exists("node_modules") then
+            if os.host() == "windows" then
+                if option.get("verbose") then
+                    os.exec("pnpm.cmd install")
+                else
+                    os.run("pnpm.cmd install")
+                end
+            else
+                if option.get("verbose") then
+                    os.exec("pnpm install")
+                else
+                    os.run("pnpm install")
+                end
+            end
+        end
         if os.host() == "windows" then
             if option.get("verbose") then
                 os.exec("pnpm.cmd build --emptyOutDir")
