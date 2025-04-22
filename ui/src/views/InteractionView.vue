@@ -2,7 +2,9 @@
   <div>
     <div class="fl">
       <el-text class="mx-1">从c++接收的数据：</el-text>
-      <el-text class="mx-1 receiveCppData" type="success" @receive-data="receiveData">{{ data }}</el-text>
+      <el-text class="mx-1 receiveCppData" type="success" @receive-data="receiveData">{{
+        data
+      }}</el-text>
     </div>
     <div class="s1"></div>
     <div class="fl">
@@ -22,16 +24,16 @@ const count = ref(0)
 
 // 处理按钮点击事件的函数
 const click = () => {
-  window.webui.call("clickCount", "点击按钮").then((response) => {
-    count.value = parseInt(response, 10);
-  });
+  window.webui.call('clickCount', '点击按钮').then((response) => {
+    count.value = parseInt(response, 10)
+  })
 }
 
 interface MyCustomEventDetail {
-  message: string;
+  message: string
 }
 
 const receiveData = (event: CustomEvent<MyCustomEventDetail>) => {
-  data.value = event.detail.message;
+  data.value = event.detail.message
 }
 </script>
