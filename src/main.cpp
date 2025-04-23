@@ -10,27 +10,41 @@
 #include <sstream>
 #include <string>
 
-template<typename ... Args>
-std::string concatEven(std::string firstString, std::string secondString, std::string str, Args... args);
+template<typename T1, typename T2, typename ... Args>
+void concatProcess(std::string& result, T1 && firstString, T2 && secondString, Args && ... args);
 
-template<typename ... Args>
-std::string concatOdd(std::string firstString, std::string secondString, std::string str, Args... args) {
-    return str + firstString + concatEven(firstString, secondString, args ...);
+template<typename T1, typename T2, typename T3, typename T4, typename ... Args>
+void concatMore(std::string& result, T1&& firstString, T2&& secondString, T3&& str1, T4&& str2, Args&&... args) {
+    result.append(str1).append(firstString).append(str2).append(secondString);
+    concatProcess(result, std::forward<T1>(firstString), std::forward<T2>(secondString), std::forward<Args>(args)...);
 }
 
-template<>
-std::string concatOdd(std::string firstString, std::string secondString, std::string str) {
-    return str + firstString;
+template<typename T1, typename T2, typename T3, typename T4>
+void concatMore(std::string& result, T1&& firstString, T2&& secondString, T3&& str1, T4&& str2) {
+    result.append(str1).append(firstString).append(str2).append(secondString);
 }
 
-template<typename ... Args>
-std::string concatEven(std::string firstString, std::string secondString, std::string str, Args... args) {
-    return str + secondString + concatOdd(firstString, secondString, args ...);
+template<typename T1, typename T2>
+void concat(std::string& result, T1&& firstString, T2&& str1) {
+    result.append(str1).append(firstString);
 }
 
-template<>
-std::string concatEven(std::string firstString, std::string secondString, std::string str) {
-    return str + secondString;
+template<typename T1, typename T2, typename ... Args>
+void concatProcess(std::string& result, T1&& firstString, T2&& secondString, Args&&... args) {
+    constexpr size_t count = sizeof...(Args);
+
+    if constexpr (count >= 2) {
+        concatMore(result, firstString, secondString, std::forward<Args>(args)...);
+    } else if constexpr (count == 1) {
+        concat(result, firstString, std::forward<Args>(args)...);
+    }
+}
+
+template<typename T1, typename T2, typename ... Args>
+std::string concatString(T1&& firstString, T2&& secondString, Args&&... args) {
+    std::string result = "";
+    concatProcess(result, std::forward<T1>(firstString), std::forward<T2>(secondString), std::forward<Args>(args)...);
+    return result;
 }
 
 // 生成自定义事件执行脚本
@@ -39,14 +53,18 @@ std::string generateCustomEvent(std::string className, std::string ev, Args... a
     std::string str = "for(e of document.getElementsByClassName('" + className + "')){";
     str += "e.dispatchEvent(new CustomEvent('" + ev + "', { detail: { ";
 
-    str += concatOdd(": '", "', ", args ...);
+    str += concatString(": '", "', ", args ...);
 
     str += " }, bubbles: false, cancelable: true }));";
     str += "}";
     return str;
 }
 
-int64_t count = 0;
+static std::string generateCustomEventForJson(const std::string& className, const std::string& eventName, const std::string& json) {
+    return "for(e of document.getElementsByClassName('" + className + "')){e.dispatchEvent(new CustomEvent('" + eventName + "', { detail: " + json + ", bubbles: false, cancelable: true }));}";
+}
+
+int64_t clickCount = 0;
 thread::ThreadPool pool;
 bool running = true;
 webui::window myWindow;
@@ -63,7 +81,7 @@ std::function<void()> timeSend = []() {
         pool.addDelayTask(std::chrono::seconds(1), timeSend);
     }
 };
-static void startServer(const std::string& url,int port=-1) {
+static void startServer(const std::string& url, int port = -1) {
     webui::set_default_root_folder("dist");
 
     myWindow.bind("", [](webui::window::event *e) {
@@ -82,13 +100,13 @@ static void startServer(const std::string& url,int port=-1) {
             }
         });
     myWindow.bind("clickCount", [](webui::window::event *e) {
-            count++;
+            clickCount++;
             std::cout << e->get_string_view(0) << std::endl;
-            e->return_string(std::format("{}", count));
+            e->return_string(std::format("{}", clickCount));
         });
     if (port != -1) {
         myWindow.set_size(port);
-    } 
+    }
     myWindow.show(url);
     webui::wait();
 }
@@ -100,7 +118,7 @@ int main(int argc, char **argv) {
     if (argc < 2) {
         startServer("index.html");
     } else {
-        startServer(argv[1],9000);
+        startServer(argv[1], 9000);
     }
     return 0;
 }
@@ -112,8 +130,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
     (void)hPrevInstance;
     (void)lpCmdLine;
     (void)nShowCmd;
-     startServer("index.html");
-     return 0;
+    startServer("index.html");
+    return 0;
 }
 
 #endif
